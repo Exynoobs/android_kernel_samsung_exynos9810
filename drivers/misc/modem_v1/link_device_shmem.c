@@ -2260,16 +2260,8 @@ static int shmem_security_request(struct link_device *ld, struct io_device *iod,
 		goto exit;
 	}
 
-	err = shm_get_security_param2(msr.mode, msr.size_boot, &param2);
-	if (err) {
-		mif_err("%s: ERR! parameter2 is invalid\n", ld->name);
-		goto exit;
-	}
-	err = shm_get_security_param3(msr.mode, msr.size_main, &param3);
-	if (err) {
-		mif_err("%s: ERR! parameter3 is invalid\n", ld->name);
-		goto exit;
-	}
+	param2 = shm_get_security_param2(msr.mode, msr.size_boot);
+	param3 = shm_get_security_param3(msr.mode, msr.size_main);
 
 #if !defined(CONFIG_CP_SECURE_BOOT)
 	if (msr.mode == 0)

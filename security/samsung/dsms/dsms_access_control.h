@@ -9,19 +9,22 @@
 #ifndef _DSMS_ACCESS_CONTROL_H
 #define _DSMS_ACCESS_CONTROL_H
 
+#ifdef CONFIG_KUNIT
+#include <kunit/mock.h>
+#endif
 #include <linux/types.h>
 
 #define CALLER_FRAME (0)
 
-#ifdef DSMS_ALLOWLIST_IGNORE_NAME_SUFFIXES_ENABLE
-#  define ALLOWLIST_IGNORE_SUFFIX (1)
+#ifdef DSMS_WHITELIST_IGNORE_NAME_SUFFIXES_ENABLE
+#  define WHITELIST_IGNORE_SUFFIX (1)
 #else
-#  define ALLOWLIST_IGNORE_SUFFIX (0)
+#  define WHITELIST_IGNORE_SUFFIX (0)
 #endif
 
-static inline char should_ignore_allowlist_suffix(void)
+static inline char should_ignore_whitelist_suffix(void)
 {
-	return ALLOWLIST_IGNORE_SUFFIX;
+	return WHITELIST_IGNORE_SUFFIX;
 }
 
 struct dsms_policy_entry {
@@ -33,5 +36,11 @@ extern struct dsms_policy_entry dsms_policy[];
 
 extern size_t dsms_policy_size(void);
 extern int dsms_verify_access(const void *address);
+
+#ifdef CONFIG_KUNIT
+extern int compare_policy_entries(const char *function_name,
+				  const struct dsms_policy_entry *entry);
+extern struct dsms_policy_entry *find_policy_entry(const char *function_name);
+#endif
 
 #endif /* _DSMS_ACCESS_CONTROL_H */
